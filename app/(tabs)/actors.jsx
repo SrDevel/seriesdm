@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import Card from "../../components/Card";
-import { getData, insertData, uploadImages } from "../../lib/api";
+import { getData, insertData, uploadImages, deleteData } from "../../lib/api";
 import { FontAwesome } from "react-native-vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AddActorModal from "../../components/AddActorModal";
@@ -93,6 +93,13 @@ const Actors = () => {
     }
   };
 
+  const handleDeleteActor = async (id) => {
+    setLoading(true);
+    await deleteData("actores", id);
+    await fetchActors();
+    setLoading(false);
+  };
+
   if (loading) {
     return (
       <SafeAreaView className="bg-primary h-full flex items-center justify-center">
@@ -120,11 +127,12 @@ const Actors = () => {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Card
+                  onLongPress={() => alert("Eliminar actor")} // Eliminar actor
                   image={item.imagen}
                   icon={!item.imagen && <FontAwesome name="user" size={64} />}
                   title={`${item.nombre_actor} ${item.apellido_actor}`}
                   onPress={() => {
-                    handleEditActor(item.id)
+                    handleEditActor(item.id);
                   }} // Navegar a editar
                   text={`Es un actor ${item.nacionalidad}, nació en el año ${
                     item.fecha_nacimiento.split("-")[0]

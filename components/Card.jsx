@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from "react";
 import { View, Text, Image, Animated, Pressable } from "react-native";
 import { FontAwesome } from "react-native-vector-icons";
 
-const Card = ({ image, title, text, onPress, style }) => {
+const Card = ({ image, title, text, onPress, style, onLongPress }) => {
   // Referencia para la animación
   const fadeAnim = useRef(new Animated.Value(0)).current;
 
@@ -16,7 +16,7 @@ const Card = ({ image, title, text, onPress, style }) => {
   }, [fadeAnim]);
 
   return (
-    <Pressable onPress={onPress}>
+    <Pressable onPress={onPress} onLongPress={onLongPress}>
       <Animated.View
         style={{
           opacity: fadeAnim,
