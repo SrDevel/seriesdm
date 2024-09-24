@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, Alert } from 'react-native';
-import DateTimePicker from '@react-native-community/datetimepicker';
-import CustomButton from './CustomButton'; // Importamos el botón personalizado
+import React, { useState, useEffect } from "react";
+import { View, Text, Alert } from "react-native";
+import DateTimePicker from "@react-native-community/datetimepicker";
+import CustomButton from "./CustomButton"; // Importamos el botón personalizado
 
 const CalendarField = ({ label, onDateChange, initialDate }) => {
-  const [date, setDate] = useState(initialDate ? new Date(initialDate) : null);
+  const [date, setDate] = useState(
+    initialDate ? new Date(initialDate) : new Date() // Si hay una fecha inicial, la usamos
+  );
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -15,17 +17,23 @@ const CalendarField = ({ label, onDateChange, initialDate }) => {
   }, [initialDate]);
 
   const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
     setShow(false);
 
-    // Validamos que la fecha no sea futura
-    if (currentDate && currentDate <= new Date()) {
-      setDate(currentDate);
-      if (onDateChange) {
-        onDateChange(currentDate.toISOString().split('T')[0]); // Formato YYYY-MM-DD
+    if (selectedDate !== undefined) {
+      const currentDate = selectedDate || date;
+
+      // Validamos que la fecha no sea futura
+      if (currentDate <= new Date()) {
+        setDate(currentDate);
+        if (onDateChange) {
+          onDateChange(currentDate.toISOString().split("T")[0]); // Formato YYYY-MM-DD
+        }
+      } else {
+        Alert.alert(
+          "Fecha inválida",
+          "No puedes seleccionar una fecha futura."
+        );
       }
-    } else {
-      Alert.alert("Fecha inválida", "No puedes seleccionar una fecha futura.");
     }
   };
 
@@ -38,12 +46,16 @@ const CalendarField = ({ label, onDateChange, initialDate }) => {
     const day = date.getDate();
     const month = date.getMonth() + 1;
     const year = date.getFullYear();
-    return `${day < 10 ? `0${day}` : day}/${month < 10 ? `0${month}` : month}/${year}`;
+    return `${day < 10 ? `0${day}` : day}/${
+      month < 10 ? `0${month}` : month
+    }/${year}`;
   };
 
   return (
     <View className="my-4 px-5">
-      {label && <Text className="mb-2 text-lg font-bold text-gray-800">{label}</Text>}
+      {label && (
+        <Text className="mb-2 text-lg font-bold text-gray-800">{label}</Text>
+      )}
       <CustomButton
         text={formatDate(date)}
         onPress={showDatepicker}

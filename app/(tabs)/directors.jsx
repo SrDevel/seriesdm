@@ -4,56 +4,62 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import Card from "../../components/Card";
-import { getData, insertData, uploadImages, deleteData } from "../../lib/api";
+import { getData, insertData, uploadImages } from "../../lib/api";
 import { FontAwesome } from "react-native-vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import AddPlatformModal from "../../components/AddPlatformModal";
+import AddDirectorModal from "../../components/AddDirectorModal";
 import { pickImage } from "../../utils/imagePicker";
 import { useRouter } from "expo-router";
-import ConfirmationModal from "../../components/ConfirmationModal";
 
-const Platforms = () => {
-  const [plataform, setPlataform] = useState([]);
+const Directors = () => {
+  const [director, setDirector] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
-  const [deleteModalVisible, setDeleteModalVisible] = useState(false);
   const [image, setImage] = useState(null);
   const [imageName, setImageName] = useState("");
-  const [newPlatform, setNewPlatform] = useState({
-    nombre_plataforma: "",
+  const [newDirector, setNewDirector] = useState({
+    nombre_director: "",
+    apellido_director: "",
+    nacionalidad: "",
+    fecha_nacimiento: "",
   });
-  const [platformToDelete, setPlatformToDelete] = useState(null);
-  const router = useRouter();
+  const router = useRouter(); // Hook para manejar la navegación
 
-  const handleEditPlatform = (id) => {
-    router.push(`/edit/platforms/${id}`);
+  const handleEditDirector = (id) => {
+    router.push(`/edit/directors/${id}`);
   };
 
   useEffect(() => {
-    const fetchPlatforms = async () => {
-      const { data, error } = await getData("plataformas");
+    const fetchDirectors = async () => {
+      const { data, error } = await getData("directores");
       if (error) {
         console.error("Error en getData:", error);
       } else {
-        setPlataform(data);
+        setDirector(data);
       }
       setLoading(false);
     };
 
-    fetchPlatforms();
+    fetchDirectors();
   }, []);
 
-  const fetchPlatforms = async () => {
+  const fetchDirectors = async () => {
     setLoading(true);
-    const { data, error } = await getData("plataformas");
+    const { data, error } = await getData("directores");
     if (!error) {
-      setPlataform(data);
+      setDirector(data);
     }
     setLoading(false);
   };
 
-  const handleAddPlatform = async () => {
-    if (!newPlatform.nombre_plataforma) {
+  const handleAddDirector = async () => {
+    console.log(newDirector.fecha_nacimiento);
+    
+    if (
+      !newDirector.nombre_director ||
+      !newDirector.apellido_director ||
+      !newDirector.nacionalidad
+    ) {
       return alert("Por favor, llena todos los campos");
     }
 
@@ -64,15 +70,18 @@ const Platforms = () => {
       if (!imageUri) return alert("Error subiendo la imagen");
     }
 
-    const platformData = { ...newPlatform, imagen: imageUri || null };
+    const directorData = { ...newDirector, imagen: imageUri || null };
 
     setLoading(true);
-    await insertData("plataformas", platformData);
-    await fetchPlatforms();
+    await insertData("directores", directorData);
+    await fetchDirectors();
     setModalVisible(false);
     setLoading(false);
-    setNewPlatform({
-      nombre_plataforma: "",
+    setNewDirector({
+      nombre_director: "",
+      apellido_director: "",
+      nacionalidad: "",
+      fecha_nacimiento: "",
     });
     setImage(null); // Limpiar imagen seleccionada
   };
@@ -83,19 +92,6 @@ const Platforms = () => {
       setImage(result);
       setImageName(result.split("/").pop());
     }
-  };
-
-  const handleDeletePlatform = async (id) => {
-    setPlatformToDelete(id);
-    setDeleteModalVisible(true);
-  };
-
-  const confirmDeletePlatform = async () => {
-    setLoading(true);
-    await deleteData("plataformas", platformToDelete);
-    await fetchPlatforms();
-    setDeleteModalVisible(false);
-    setLoading(false);
   };
 
   if (loading) {
@@ -118,32 +114,34 @@ const Platforms = () => {
         }}
       >
         <View className="mt-2 flex-1">
-          {plataform.length > 0 ? (
+          {director.length > 0 ? (
             <FlatList
-              data={plataform}
+              data={director}
               className="w-11/12 mx-auto mt-2"
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Card
                   image={item.imagen}
-                  onLongPress={() => handleDeletePlatform(item.id)}
                   icon={!item.imagen && <FontAwesome name="user" size={64} />}
-                  title={`${item.nombre_plataforma}`}
+                  title={`${item.nombre_director} ${item.apellido_director}`}
                   onPress={() => {
-                    handleEditPlatform(item.id);
+                    handleEditDirector(item.id)
                   }} // Navegar a editar
+                  text={`Es un director ${item.nacionalidad}, nació en el año ${
+                    item.fecha_nacimiento.split("-")[0]
+                  }`}
                   style="mb-2 w-11/12 mx-auto mt-2"
                 />
               )}
             />
           ) : (
-            <Text className="text-white text-center">No hay plataformas</Text>
+            <Text className="text-white text-center">No hay Directores</Text>
           )}
         </View>
       </LinearGradient>
 
       <CustomButton
-        title="Agregar plataformas"
+        title="Agregar director"
         isCircular={true}
         onPress={() => setModalVisible(true)}
         style="absolute bottom-10 right-10 rounded-full bg-primary"
@@ -156,27 +154,19 @@ const Platforms = () => {
         }
       />
 
-      <ConfirmationModal
-        visible={deleteModalVisible}
-        onClose={() => setDeleteModalVisible(false)}
-        onConfirm={confirmDeletePlatform}
-        title="Eliminar plataforma"
-        description="¿Estás seguro de eliminar esta plataforma?"
-      />
-
       {/* Llamar al modal aquí */}
-      <AddPlatformModal
+      <AddDirectorModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onSubmit={handleAddPlatform}
+        onSubmit={handleAddDirector}
         image={image}
         imageName={imageName}
         handlePickImage={handlePickImage}
-        newPlatform={newPlatform}
-        setNewPlatform={setNewPlatform}
+        newDirector={newDirector}
+        setNewDirector={setNewDirector}
       />
     </SafeAreaView>
   );
 };
 
-export default Platforms;
+export default Directors;
