@@ -10,6 +10,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AddActorModal from "../../components/AddActorModal";
 import { pickImage } from "../../utils/imagePicker";
 import { useRouter } from "expo-router";
+import ConfirmationModal from "../../components/ConfirmationModal";
 
 const Actors = () => {
   const [actor, setActor] = useState([]);
@@ -24,6 +25,8 @@ const Actors = () => {
     fecha_nacimiento: "",
   });
   const router = useRouter(); // Hook para manejar la navegación
+  const [confirmVisible, setConfirmVisible] = useState(false);
+  const [selectedActorId, setSelectedActorId] = useState(null);
 
   const handleEditActor = (id) => {
     router.push(`/edit/${id}`);
@@ -94,8 +97,14 @@ const Actors = () => {
   };
 
   const handleDeleteActor = async (id) => {
+    setSelectedActorId(id);
+    setConfirmVisible(true);
+  };
+  
+  const confirmDelete = async () => {
+    setConfirmVisible(false);
     setLoading(true);
-    await deleteData("actores", id);
+    await deleteData("actores", selectedActorId);
     await fetchActors();
     setLoading(false);
   };
@@ -127,13 +136,13 @@ const Actors = () => {
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Card
-                  onLongPress={() => alert("Eliminar actor")} // Eliminar actor
+                  onLongPress={() => handleDeleteActor(item.id)} // Aquí llamas a la función que activa el modal
                   image={item.imagen}
                   icon={!item.imagen && <FontAwesome name="user" size={64} />}
                   title={`${item.nombre_actor} ${item.apellido_actor}`}
                   onPress={() => {
                     handleEditActor(item.id);
-                  }} // Navegar a editar
+                  }}
                   text={`Es un actor ${item.nacionalidad}, nació en el año ${
                     item.fecha_nacimiento.split("-")[0]
                   }`}
@@ -146,22 +155,25 @@ const Actors = () => {
           )}
         </View>
       </LinearGradient>
-
+  
       <CustomButton
         title="Agregar actor"
         isCircular={true}
         onPress={() => setModalVisible(true)}
         style="absolute bottom-10 right-10 rounded-full bg-primary"
         iconName={
-          <FontAwesome
-            name="plus"
-            size={24}
-            className="text-white text-center"
-          />
+          <FontAwesome name="plus" size={24} className="text-white text-center" />
         }
       />
-
-      {/* Llamar al modal aquí */}
+  
+      {/* Aquí es donde se coloca el ConfirmationModal */}
+      <ConfirmationModal
+        visible={confirmVisible}
+        onConfirm={confirmDelete}
+        onCancel={() => setConfirmVisible(false)}
+      />
+  
+      {/* Llamar al modal para agregar actor */}
       <AddActorModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
