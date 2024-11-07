@@ -1,10 +1,14 @@
 import { Tabs } from 'expo-router'
 import { FontAwesome } from '@expo/vector-icons'
 import React from 'react'
+import AccountMenu from '../../components/SignOut'
+import { StatusBar } from 'expo-status-bar'
 
 const TabsLayout = () => {
   return (
     <>
+    <AccountMenu />
+      <StatusBar barStyle='light-content' backgroundColor='#8a5bcf' />
       <Tabs
         screenOptions={{
           tabBarShowLabel: false,

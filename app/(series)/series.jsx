@@ -4,6 +4,7 @@ import { getData } from '../lib/api';
 import { Stack, useRouter } from 'expo-router';
 import { FontAwesome } from '@expo/vector-icons';
 import { supabase } from '../lib/supabase';
+import AccountMenu from '../../components/SignOut';
 
 export default function SeriesScreen() {
   const [series, setSeries] = useState([]);
@@ -98,6 +99,7 @@ export default function SeriesScreen() {
       />
       
       <SafeAreaView style={{ flex: 1, backgroundColor: '#1e1b4b' }}>
+        <AccountMenu />
         <ScrollView 
           className="flex-1"
           contentContainerStyle={{

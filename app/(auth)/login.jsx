@@ -3,6 +3,7 @@ import { View, TextInput, TouchableOpacity, Text } from 'react-native';
 import { useRouter, Link } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { supabase } from '../lib/supabase';
+import { StatusBar } from 'expo-status-bar';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -38,6 +39,7 @@ export default function Login() {
       colors={['#1e1b4b', '#1e40af', '#000']}
       className="flex-1"
     >
+      <StatusBar barStyle="light-content" backgroundColor="#1e1b4b" />
       <View className="flex-1 justify-center p-6">
         <View className="bg-white/10 p-8 rounded-3xl border border-white/20">
           <Text className="text-4xl font-bold text-white text-center mb-8">
