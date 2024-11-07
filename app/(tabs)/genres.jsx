@@ -12,7 +12,7 @@ import ConfirmationModal from "../../components/ConfirmationModal";
 import { useRouter } from "expo-router";
 
 const Genres = () => {
-  const [genres, setGenres] = useState([]);
+  const [generos, setGeneros] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
@@ -24,21 +24,21 @@ const Genres = () => {
 
   // Función para navegar a editar genero
   const handleEditGenre = (id) => {
-    router.push(`/edit/genres/${id}`);
+    router.push(`/edit/generos/${id}`);
   };
 
   // Función para obtener los datos de los generos
-  const fetchGenres = async () => {
+  const fetchGeneros = async () => {
     setLoading(true);
-    const { data, error } = await getData("genres");
+    const { data, error } = await getData("generos");
     if (!error) {
-      setGenres(data);
+      setgeneros(data);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchGenres();
+    fetchGeneros();
   }, []);
 
   const handleAddGenre = async () => {
@@ -47,8 +47,8 @@ const Genres = () => {
     }
 
     setLoading(true);
-    await insertData("genres", newGenre);
-    await fetchGenres();
+    await insertData("generos", newGenre);
+    await fetchGeneros();
     setModalVisible(false);
     setLoading(false);
     setNewGenre({
@@ -63,8 +63,8 @@ const Genres = () => {
 
   const confirmDeleteGenre = async () => {
     setLoading(true);
-    await deleteData("genres", genreToDelete);
-    await fetchGenres();
+    await deleteData("generos", genreToDelete);
+    await fetchGeneros();
     setDeleteModalVisible(false);
     setLoading(false);
   };
@@ -89,9 +89,9 @@ const Genres = () => {
         }}
       >
         <View className="mt-2 flex-1">
-          {genres.length > 0 ? (
+          {generos.length > 0 ? (
             <FlatList
-              data={genres}
+              data={generos}
               className="w-11/12 mx-auto mt-2"
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (

@@ -1,44 +1,87 @@
-import React, { useState } from 'react';
-import { View, Pressable, Text } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, FlatList, ActivityIndicator, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { LinearGradient } from 'expo-linear-gradient';
+import { FontAwesome } from '@expo/vector-icons';
 import AddSerieModal from '../../components/addSerieModal';
-import { pickImage } from "../../utils/imagePicker";
+import Card from '../../components/Card';
+import { getData, insertData } from '../lib/api';
+import { StatusBar } from 'expo-status-bar';
 
 const NewSerie = () => {
+  const [series, setSeries] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [image, setImage] = useState(null);
-  const [imageName, setImageName] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [selectedSerie, setSelectedSerie] = useState(null);
 
-  const handlePickImage = async () => {
-    const imageUri = await pickImage();
-    if (imageUri) {
-      setImage(imageUri);
-      setImageName(imageUri.split('/').pop());
+  useEffect(() => {
+    fetchSeries();
+  }, []);
+
+  const fetchSeries = async () => {
+    try {
+      setLoading(true);
+      const { data } = await getData('series');
+      setSeries(data || []);
+    } catch (error) {
+      console.error('Error fetching series:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleSubmit = (serieData) => {
-    console.log('Nueva serie:', { ...serieData, image });
-    setModalVisible(false);
+  const handleEditSerie = (serie) => {
+    setSelectedSerie(serie);
+    setModalVisible(true);
   };
 
-  return (
-    <View className="flex-1 p-4">
-      <Pressable
-        onPress={() => setModalVisible(true)}
-        className="bg-primary p-4 rounded-lg"
-      >
-        <Text className="text-white text-center">Agregar Nueva Serie</Text>
-      </Pressable>
+  if (loading) {
+    return (
+      <SafeAreaView className="bg-indigo-950 h-full flex items-center justify-center">
+        <ActivityIndicator size="large" color="#fff" />
+      </SafeAreaView>
+    );
+  }
 
-      <AddSerieModal
-        visible={modalVisible}
-        onClose={() => setModalVisible(false)}
-        onSubmit={handleSubmit}
-        image={image}
-        imageName={imageName}
-        handlePickImage={handlePickImage}
-      />
-    </View>
+  return (
+    <SafeAreaView className="bg-indigo-950 h-full">
+      <StatusBar style="light" />
+      <LinearGradient
+        colors={["#1e1b4b", "#312e81", "#4338ca"]}
+        style={{ flex: 1 }}
+      >
+        <View className="flex-1">
+          <FlatList
+            data={series}
+            className="w-11/12 mx-auto mt-2"
+            keyExtractor={(item) => item.id.toString()}
+            renderItem={({ item }) => (
+              <Card
+                image={item.imagen}
+                title={item.titulo}
+                text={`Género: ${item.id_generos}`}
+                onPress={() => handleEditSerie(item)}
+                style="mb-2"
+              />
+            )}
+          />
+        </View>
+
+        <TouchableOpacity
+          onPress={() => setModalVisible(true)}
+          className="absolute bottom-10 left-10 rounded-full bg-indigo-600 w-14 h-14 items-center justify-center"
+        >
+          <FontAwesome name="plus" size={24} color="white" />
+        </TouchableOpacity>
+
+        <AddSerieModal
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          onSubmit={fetchSeries}
+          editSerie={selectedSerie}
+        />
+      </LinearGradient>
+    </SafeAreaView>
   );
 };
 

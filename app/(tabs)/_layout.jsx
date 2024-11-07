@@ -65,7 +65,7 @@ const TabsLayout = () => {
           }}
         />
         <Tabs.Screen
-          name='series'
+          name='newSerie'
           options={{
             title: 'Series',
             tabBarIcon: ({ color }) => (

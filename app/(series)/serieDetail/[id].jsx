@@ -1,4 +1,3 @@
-// app/series/[id].jsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView, TextInput, TouchableOpacity, ActivityIndicator } from 'react-native';
 import { useLocalSearchParams, Stack } from 'expo-router';
