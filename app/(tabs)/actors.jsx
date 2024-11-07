@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../components/CustomButton";
 import ExpoStatusBar from "expo-status-bar/build/ExpoStatusBar";
 import Card from "../../components/Card";
-import { getData, insertData, uploadImages, deleteData } from "../../lib/api";
+import { getData, insertData, uploadImages, deleteData } from "../lib/api";
 import { FontAwesome } from "react-native-vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
 import AddActorModal from "../../components/AddActorModal";

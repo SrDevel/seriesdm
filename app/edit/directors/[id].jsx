@@ -9,7 +9,7 @@ import {
   Image,
   StatusBar,
 } from "react-native";
-import { getData, getDataById, updateData, uploadImages } from "../../../lib/api";
+import { getData, getDataById, updateData, uploadImages } from "../../lib/api";
 import { pickImage } from "../../../utils/imagePicker";
 import { FontAwesome } from "react-native-vector-icons";
 import { SafeAreaView } from "react-native-safe-area-context";

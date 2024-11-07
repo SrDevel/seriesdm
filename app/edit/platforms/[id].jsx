@@ -9,13 +9,13 @@ import {
   Image,
   StatusBar,
 } from "react-native";
-import { getDataById, updateData, uploadImages } from "../../../lib/api";
+import { getDataById, updateData, uploadImages } from "../../lib/api";
 import { pickImage } from "../../../utils/imagePicker";
 import { SafeAreaView } from "react-native-safe-area-context";
 import CustomButton from "../../../components/CustomButton";
 
 const EditPlatform = () => {
-  const { id } = useLocalSearchParams(); // Obtener el ID dinámico de la URL
+  const { id } = useLocalSearchParams();
   const router = useRouter();
   const [platform, setPlatform] = useState(null);
   const [loading, setLoading] = useState(true);

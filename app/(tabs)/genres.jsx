@@ -7,66 +7,64 @@ import Card from "../../components/Card";
 import { getData, insertData, deleteData } from "../lib/api";
 import { FontAwesome } from "react-native-vector-icons";
 import { LinearGradient } from "expo-linear-gradient";
-import AddLanguageModal from "../../components/AddLanguageModal";
+import AddGenreModal from "../../components/AddGenreModal";
 import ConfirmationModal from "../../components/ConfirmationModal";
 import { useRouter } from "expo-router";
 
-const Languages = () => {
-  const [languages, setLanguages] = useState([]);
+const Genres = () => {
+  const [genres, setGenres] = useState([]);
   const [loading, setLoading] = useState(true);
   const [modalVisible, setModalVisible] = useState(false);
   const [deleteModalVisible, setDeleteModalVisible] = useState(false);
-  const [newLanguage, setNewLanguage] = useState({
-    nombre_idioma: "",
-    iso_code: "",
+  const [newGenre, setNewGenre] = useState({
+    nombre_genero: "",
   });
-  const [languageToDelete, setLanguageToDelete] = useState(null);
+  const [genreToDelete, setGenreToDelete] = useState(null);
   const router = useRouter();
 
-  // Función para navegar a editar idioma
-  const handleEditLanguage = (id) => {
-    router.push(`/edit/languages/${id}`);
+  // Función para navegar a editar genero
+  const handleEditGenre = (id) => {
+    router.push(`/edit/genres/${id}`);
   };
 
-  // Función para obtener los datos de los idiomas
-  const fetchLanguages = async () => {
+  // Función para obtener los datos de los generos
+  const fetchGenres = async () => {
     setLoading(true);
-    const { data, error } = await getData("idiomas");
+    const { data, error } = await getData("genres");
     if (!error) {
-      setLanguages(data);
+      setGenres(data);
     }
     setLoading(false);
   };
 
   useEffect(() => {
-    fetchLanguages();
+    fetchGenres();
   }, []);
 
-  const handleAddLanguage = async () => {
-    if (!newLanguage.nombre_idioma || !newLanguage.iso_code) {
+  const handleAddGenre = async () => {
+    if (!newGenre.nombre_genero) {
       return alert("Por favor, llena todos los campos");
     }
 
     setLoading(true);
-    await insertData("idiomas", newLanguage);
-    await fetchLanguages();
+    await insertData("genres", newGenre);
+    await fetchGenres();
     setModalVisible(false);
     setLoading(false);
-    setNewLanguage({
-      nombre_idioma: "",
-      iso_code: "",
+    setNewGenre({
+      nombre_genero: "",
     });
   };
 
-  const handleDeleteLanguage = async (id) => {
-    setLanguageToDelete(id);
+  const handleDeleteGenre = async (id) => {
+    setGenreToDelete(id);
     setDeleteModalVisible(true);
   };
 
-  const confirmDeleteLanguage = async () => {
+  const confirmDeleteGenre = async () => {
     setLoading(true);
-    await deleteData("idiomas", languageToDelete);
-    await fetchLanguages();
+    await deleteData("genres", genreToDelete);
+    await fetchGenres();
     setDeleteModalVisible(false);
     setLoading(false);
   };
@@ -91,32 +89,32 @@ const Languages = () => {
         }}
       >
         <View className="mt-2 flex-1">
-          {languages.length > 0 ? (
+          {genres.length > 0 ? (
             <FlatList
-              data={languages}
+              data={genres}
               className="w-11/12 mx-auto mt-2"
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <Card
                   image={item.imagen}
-                  onLongPress={() => handleDeleteLanguage(item.id)}
-                  icon={!item.imagen && <FontAwesome name="language" size={64} />}
-                  title={`${item.nombre_idioma} (${item.iso_code})`}
+                  onLongPress={() => handleDeleteGenre(item.id)}
+                  icon={!item.imagen && <FontAwesome name="genre" size={64} />}
+                  title={`${item.nombre_genero}`}
                   onPress={() => {
-                    handleEditLanguage(item.id);
+                    handleEditGenre(item.id);
                   }} // Navegar a editar
                   style="mb-2 w-11/12 mx-auto mt-2"
                 />
               )}
             />
           ) : (
-            <Text className="text-white text-center">No hay idiomas</Text>
+            <Text className="text-white text-center">No hay géneros</Text>
           )}
         </View>
       </LinearGradient>
 
       <CustomButton
-        title="Agregar idioma"
+        title="Agregar genero"
         isCircular={true}
         onPress={() => setModalVisible(true)}
         style="absolute bottom-10 right-10 rounded-full bg-primary"
@@ -132,21 +130,21 @@ const Languages = () => {
       <ConfirmationModal
         visible={deleteModalVisible}
         onClose={() => setDeleteModalVisible(false)}
-        onConfirm={confirmDeleteLanguage}
-        title="Eliminar idioma"
-        description="¿Estás seguro de eliminar este idioma?"
+        onConfirm={confirmDeleteGenre}
+        title="Eliminar genero"
+        description="¿Estás seguro de eliminar este género?"
       />
 
       {/* Llamar al modal aquí */}
-      <AddLanguageModal
+      <AddGenreModal
         visible={modalVisible}
         onClose={() => setModalVisible(false)}
-        onSubmit={handleAddLanguage}
-        newLanguage={newLanguage}
-        setNewLanguage={setNewLanguage}
+        onSubmit={handleAddGenre}
+        newGenre={newGenre}
+        setNewGenre={setNewGenre}
       />
     </SafeAreaView>
   );
 };
 
-export default Languages;
+export default Genres;

@@ -19,7 +19,7 @@ const TabsLayout = () => {
           }
         }}
       >
-        <Tabs.Screen 
+        <Tabs.Screen
           name='actors'
           options={{
             title: 'Actores',
@@ -28,7 +28,7 @@ const TabsLayout = () => {
             )
           }}
         />
-        <Tabs.Screen 
+        <Tabs.Screen
           name='platforms'
           options={{
             title: 'Plataformas',
@@ -37,7 +37,7 @@ const TabsLayout = () => {
             )
           }}
         />
-        <Tabs.Screen 
+        <Tabs.Screen
           name='directors'
           options={{
             title: 'Directores',
@@ -46,12 +46,30 @@ const TabsLayout = () => {
             )
           }}
         />
-        <Tabs.Screen 
+        <Tabs.Screen
           name='languages'
           options={{
             title: 'Idiomas',
             tabBarIcon: ({ color }) => (
               <FontAwesome name='language' size={24} color={color} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name='genres'
+          options={{
+            title: 'Géneros',
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name='tags' size={24} color={color} />
+            )
+          }}
+        />
+        <Tabs.Screen
+          name='series'
+          options={{
+            title: 'Series',
+            tabBarIcon: ({ color }) => (
+              <FontAwesome name='film' size={24} color={color} />
             )
           }}
         />
